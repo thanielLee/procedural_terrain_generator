@@ -6,9 +6,8 @@
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_vnucn"]
 noise_type = 3
-seed = 1
-frequency = 0.034
 fractal_octaves = 1
+fractal_lacunarity = 1.0
 metadata/_preview_in_3d_space_ = true
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_bl0pa"]
@@ -22,9 +21,12 @@ transform = Transform3D(0.0331191, 0.721416, -0.69171, 0, 0.69209, 0.721811, 0.9
 [node name="Map Generator" parent="." instance=ExtResource("1_ejk1d")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00351858, -0.0026269, 0.0070585)
 script = ExtResource("2_1synd")
-map_width = 128
-map_height = 128
+map_width = 101
+map_height = 100
 noise_scale = 0.3
+octaves = 1
+lacunarity = 1.0
+persistence = 1.0
 noise_lite = SubResource("FastNoiseLite_vnucn")
 
 [node name="Terrain Plane" type="MeshInstance3D" parent="."]
