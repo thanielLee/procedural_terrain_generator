@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=3 uid="uid://bhka11udellne"]
+
+[ext_resource type="PackedScene" uid="uid://cdekcenc131dh" path="res://Scenes/map_generator.tscn" id="1_ejk1d"]
+[ext_resource type="Script" uid="uid://dn6ym13bsrfkr" path="res://Scripts/map_generator.gd" id="2_1synd"]
+[ext_resource type="Material" uid="uid://dgq6kbd5e06fo" path="res://Materials/noise_material.tres" id="4_c3mwy"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_vnucn"]
+noise_type = 3
+seed = 1
+frequency = 0.034
+fractal_octaves = 1
+metadata/_preview_in_3d_space_ = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_bl0pa"]
+lightmap_size_hint = Vector2i(12, 12)
+
+[node name="Root" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.0331191, 0.721416, -0.69171, 0, 0.69209, 0.721811, 0.999451, -0.0239057, 0.0229214, -1.76896, 1.99192, 0.157771)
+
+[node name="Map Generator" parent="." instance=ExtResource("1_ejk1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00351858, -0.0026269, 0.0070585)
+script = ExtResource("2_1synd")
+map_width = 128
+map_height = 128
+noise_scale = 0.3
+noise_lite = SubResource("FastNoiseLite_vnucn")
+
+[node name="Terrain Plane" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_bl0pa")
+surface_material_override/0 = ExtResource("4_c3mwy")

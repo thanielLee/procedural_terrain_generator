@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://bhka11udellne"]
+
+[ext_resource type="PackedScene" uid="uid://cdekcenc131dh" path="res://Scenes/map_generator.tscn" id="1_ejk1d"]
+[ext_resource type="Script" path="res://Scripts/map_generator.gd" id="2_1synd"]
+[ext_resource type="Script" path="res://Scripts/map_display.gd" id="2_c7pqp"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_bl0pa"]
+lightmap_size_hint = Vector2i(12, 12)
+
+[node name="Root" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.0331191, 0.721416, -0.69171, 0, 0.69209, 0.721811, 0.999451, -0.0239057, 0.0229214, -1.76896, 1.99192, 0.157771)
+
+[node name="Map Displayer" type="Node3D" parent="."]
+script = ExtResource("2_c7pqp")
+
+[node name="Map Generator" parent="." instance=ExtResource("1_ejk1d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00267088, -0.00268531, 0.00397098)
+script = ExtResource("2_1synd")
+
+[node name="Terrain Plane" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_bl0pa")
