@@ -1,9 +1,17 @@
 class_name NoiseGenerator
 
 
-static func generate_noise_map(map_width, map_height, scale, noise_lite, octaves, persistence, lacunarity):
+static func generate_noise_map(map_width, map_height, scale, noise_lite, seed, octaves, persistence, lacunarity, offset):
 	var noise_map = []
+	var octave_offsets = []
+	var rng = RandomNumberGenerator.new()
+	rng.seed = seed
 	
+	for i in range(octaves):
+		var offset_x = rng.randf_range(-100000, 100000) + offset.x
+		var offset_y = rng.randf_range(-100000, 100000) + offset.y
+		octave_offsets.append(Vector2(offset_x, offset_y))
+		
 	if scale <= 0:
 		scale = 0.0001
 		
@@ -20,10 +28,13 @@ static func generate_noise_map(map_width, map_height, scale, noise_lite, octaves
 	
 	var max_noise_height = -10000000.0
 	var min_noise_height = 1000000.0
+	
+	var half_width = map_width/2
+	var half_height = map_height/2
 
-	for x in range(map_width):
+	for y in range(map_height):
 		var current_row = []
-		for y in range(map_height):
+		for x in range(map_width):
 			
 			var amplitude = 1
 			var frequency = 1
@@ -31,8 +42,8 @@ static func generate_noise_map(map_width, map_height, scale, noise_lite, octaves
 
 
 			for i in range(octaves):
-				var sample_x = x / scale * frequency
-				var sample_y = y / scale * frequency
+				var sample_x = (x-half_width) / scale * frequency + octave_offsets[i].x
+				var sample_y = (y-half_height) / scale * frequency + octave_offsets[i].y
 				var perlin_value = noise_lite.get_noise_2d(sample_x, sample_y)
 
 				noise_height += perlin_value * amplitude
@@ -47,10 +58,10 @@ static func generate_noise_map(map_width, map_height, scale, noise_lite, octaves
 			min_noise_height = min(noise_height, min_noise_height)
 		noise_map.append(current_row)
 		#print(noise_map[y])
-	
-	for x in range(map_width):
-		for y in range(map_height):
-			noise_map[x][y] = inverse_lerp(min_noise_height, max_noise_height, noise_map[x][y])
+		
+	for y in range(map_height):
+		for x in range(map_width):
+			noise_map[y][x] = inverse_lerp(min_noise_height, max_noise_height, noise_map[y][x])
 	
 	#for i in range(map_width):
 		#print(noise_map[i])
