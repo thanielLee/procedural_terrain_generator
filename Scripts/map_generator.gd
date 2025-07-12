@@ -54,7 +54,7 @@ signal values_changed
 		noise_lite = value
 		values_changed.emit()
 		
-enum DrawMode {NOISE_MAP, COLOR_MAP}
+enum DrawMode {NOISE_MAP, COLOR_MAP, DRAW_MESH}
 
 @export var draw_mode : DrawMode :
 	set(value):
@@ -66,8 +66,14 @@ var noise_material = preload("res://Materials/noise_material.tres")
 
 @export_tool_button("Generate Noise Map") var button = generate_map
 
+var mesh_data : MeshInstance3D
+
+
+func return_map():
+	return NoiseGenerator.generate_noise_map(map_width, map_height, noise_scale, noise_lite, seed, octaves, persistence, lacunarity, offset)
+
 func generate_map():
-	var noise_map = NoiseGenerator.generate_noise_map(map_width, map_height, noise_scale, noise_lite, seed, octaves, persistence, lacunarity, offset)
+	var noise_map = return_map()
 	var color_map = []
 	
 	for y in range(map_height):
@@ -85,6 +91,7 @@ func generate_map():
 		draw_map(noise_map)
 	elif draw_mode == DrawMode.COLOR_MAP:
 		draw_map(color_map)
+		
 		
 	#elif draw_mode == DrawMode.COLOR_MAP:
 		
@@ -104,7 +111,19 @@ func draw_map(current_map):
 	noise_material.texture_repeat = false
 	var result = ResourceSaver.save(noise_material, "res://Materials/noise_material.tres")
 
+func draw_mesh(current_map):
+	var image_texture : ImageTexture
+	image_texture = TextureGenerator.texture_from_color_map(current_map, map_width, map_height)
 	
+	noise_material.set_texture(BaseMaterial3D.TEXTURE_ALBEDO, image_texture)
+	noise_material.texture_repeat = false
+	var result = ResourceSaver.save(noise_material, "res://Materials/noise_material.tres")
+	
+	mesh_data.generate_mesh(current_map)
+	mesh_data.set_surface_override_material(0, noise_material)
+
 func _ready():
+	mesh_data = $"../Terrain Mesh"
 	values_changed.connect(generate_map)
+	mesh_data.generate_mesh(return_map())
 	pass
